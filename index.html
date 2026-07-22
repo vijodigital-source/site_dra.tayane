@@ -257,7 +257,12 @@ h1,h2,h3,h4{
 
 @media (max-width:900px){
   .main-nav{
-    position:fixed; inset:72px 0 0 0;
+    position:fixed;
+    top:72px; right:0; bottom:0; left:0;
+    width:100%;
+    height:calc(100vh - 72px);
+    height:calc(100dvh - 72px);
+    z-index:99;
     background:var(--cream);
     flex-direction:column;
     justify-content:flex-start;
@@ -267,11 +272,14 @@ h1,h2,h3,h4{
     transform:translateX(100%);
     transition:transform var(--transition);
     border-top:1px solid var(--beige-line);
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
   }
   .main-nav.is-open{ transform:translateX(0); }
   .main-nav a{ font-size:1.15rem; }
   .header-phone{ display:none; }
   .nav-toggle{ display:flex; }
+  body.nav-open{ overflow:hidden; }
 }
 
 /* ============================================
@@ -1401,14 +1409,29 @@ window.addEventListener('scroll', () => {
 // Mobile nav toggle
 const navToggle = document.getElementById('navToggle');
 const mainNav = document.getElementById('mainNav');
+
+function openNav() {
+  document.body.classList.add('nav-open');
+  mainNav.classList.add('is-open');
+  navToggle.setAttribute('aria-expanded', 'true');
+}
+
+function closeNav() {
+  document.body.classList.remove('nav-open');
+  mainNav.classList.remove('is-open');
+  navToggle.setAttribute('aria-expanded', 'false');
+}
+
 navToggle.addEventListener('click', () => {
-  const isOpen = mainNav.classList.toggle('is-open');
-  navToggle.setAttribute('aria-expanded', isOpen);
+  if (mainNav.classList.contains('is-open')) {
+    closeNav();
+  } else {
+    openNav();
+  }
 });
 mainNav.querySelectorAll('a').forEach(link => {
   link.addEventListener('click', () => {
-    mainNav.classList.remove('is-open');
-    navToggle.setAttribute('aria-expanded', 'false');
+    closeNav();
   });
 });
 
